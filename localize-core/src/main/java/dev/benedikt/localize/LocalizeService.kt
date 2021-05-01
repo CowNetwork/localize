@@ -82,7 +82,8 @@ object LocalizeService {
      */
     fun setLocale(context: Any, locale: String) {
         synchronized(this.locales) {
-            this.locales[context] = LocaleProviderWrapper(locale, this.getLocaleProvider(locale))
+            val provider = this.findLocaleProvider(locale) ?: return
+            this.locales[context] = LocaleProviderWrapper(locale, provider)
         }
     }
 
@@ -116,10 +117,7 @@ object LocalizeService {
      * Translates the given [key] and replacing the provided [params] to the provided [locale] asynchronously.
      */
     fun translate(locale: String, key: String, vararg params: Any): CompletableFuture<String> {
-        return this.getString(locale, key).thenApply {
-            // Replace {1}, {2}, ... with %1$s, %2$s, ...
-            it.replace(Regex("\\{(\\d+)}"), "%$1\\\$s")
-        }.thenApply {
+        return this.getFormat(locale, key).thenApply {
             // Replace placeholders with parameters.
             String.format(it, *params)
         }
@@ -128,10 +126,22 @@ object LocalizeService {
     /**
      * Translates the given [key] and replacing the provided [params] to the provided [locale] synchronously.
      */
-    fun translateSync(locale: String, key: String, vararg params: Any): String {
-        val string = this.getStringSync(locale, key).replace(Regex("\\{(\\d+)}"), "%$1\\\$s")
-        return String.format(string, *params)
+    fun translateSync(locale: String, key: String, vararg params: Any): String = String.format(this.getFormatSync(locale, key), *params)
+
+    /**
+     * Translates the given [key] without replacing parameters to the provided [locale] asynchronously.
+     */
+    fun getFormat(locale: String, key: String): CompletableFuture<String> {
+        return this.getString(locale, key).thenApply {
+            // Replace {1}, {2}, ... with %1$s, %2$s, ...
+            it.replace(Regex("\\{(\\d+)}"), "%$1\\\$s")
+        }
     }
+
+    /**
+     * Translates the given [key] without replacing parameters to the provided [locale] synchronously.
+     */
+    fun getFormatSync(locale: String, key: String): String = this.getStringSync(locale, key).replace(Regex("\\{(\\d+)}"), "%$1\\\$s")
 
     /**
      * Loads the required translation string assigned to the [key] for the given [locale] asynchronously.
