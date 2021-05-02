@@ -1,6 +1,7 @@
 package dev.benedikt.localize
 
 import dev.benedikt.localize.api.LocaleProvider
+import java.lang.Exception
 import java.util.WeakHashMap
 import java.util.concurrent.CompletableFuture
 
@@ -118,8 +119,13 @@ object LocalizeService {
      */
     fun translate(locale: String, key: String, vararg params: Any): CompletableFuture<String> {
         return this.getFormat(locale, key).thenApply {
-            // Replace placeholders with parameters.
-            String.format(it, *params)
+            try {
+                // Replace placeholders with parameters.
+                String.format(it, *params)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                throw ex
+            }
         }
     }
 

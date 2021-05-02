@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import dev.benedikt.localize.api.BaseLocaleProvider
+import java.lang.Exception
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.ExperimentalPathApi
@@ -43,9 +44,8 @@ open class JsonLocaleProvider(private vararg val paths: Path) : BaseLocaleProvid
     protected fun loadStrings(json: JsonObject, prefix: String? = null): Map<String, String> {
         val strings = mutableMapOf<String, String>()
 
-        json.keySet().forEach { key ->
+        json.entrySet().forEach { (key, obj) ->
             val realKey = if (prefix == null) key else "$prefix.$key"
-            val obj = json[key]
             if (obj.isJsonObject) {
                 strings.putAll(this.loadStrings(obj.asJsonObject, realKey))
             } else {

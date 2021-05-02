@@ -15,21 +15,26 @@ class JsonHttpLocaleProvider(private vararg val urls: String) : JsonLocaleProvid
 
     @ExperimentalPathApi
     override fun loadStrings(): Map<String, String> {
-        val strings = mutableMapOf<String, String>()
-        this.urls.forEach {
-            val url = URL(it)
-            val connection = url.openConnection() as HttpURLConnection
-            connection.requestMethod = "GET"
+        try {
+            val strings = mutableMapOf<String, String>()
+            this.urls.forEach {
+                val url = URL(it)
+                val connection = url.openConnection() as HttpURLConnection
+                connection.requestMethod = "GET"
 
-            val response: String
-            BufferedReader(InputStreamReader(connection.inputStream)).use { reader ->
-                response = reader.lines().collect(Collectors.joining("\n"))
+                val response: String
+                BufferedReader(InputStreamReader(connection.inputStream, Charsets.UTF_8)).use { reader ->
+                    response = reader.lines().collect(Collectors.joining("\n"))
+                }
+
+                val json = this.gson.fromJson(response, JsonObject::class.java)
+                strings.putAll(this.loadStrings(json))
             }
-
-            val json = this.gson.fromJson(response, JsonObject::class.java)
-            strings.putAll(this.loadStrings(json))
+            return strings
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            return emptyMap()
         }
-        return strings
     }
 
 }

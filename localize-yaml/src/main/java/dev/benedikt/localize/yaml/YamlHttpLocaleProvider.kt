@@ -22,7 +22,7 @@ class YamlHttpLocaleProvider(private vararg val urls: String) : YamlLocaleProvid
             connection.requestMethod = "GET"
 
             val response: String
-            BufferedReader(InputStreamReader(connection.inputStream)).use { reader ->
+            BufferedReader(InputStreamReader(connection.inputStream, Charsets.UTF_8)).use { reader ->
                 response = reader.lines().collect(Collectors.joining("\n"))
             }
 
