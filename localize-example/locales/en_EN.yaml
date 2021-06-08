@@ -1,3 +1,0 @@
-common:
-  hello: 'Hello, {1}!'
-  hello2: 'Hello {1} and {2}!'

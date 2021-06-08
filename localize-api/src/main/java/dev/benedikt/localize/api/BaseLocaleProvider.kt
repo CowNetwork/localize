@@ -121,6 +121,10 @@ abstract class BaseLocaleProvider @JvmOverloads constructor(var unloadInterval: 
             isLoaded = true
             strings.clear()
             strings.putAll(loadStrings())
+
+            strings.forEach {
+                println("${it.key} - ${it.value}")
+            }
         }
     }
 
