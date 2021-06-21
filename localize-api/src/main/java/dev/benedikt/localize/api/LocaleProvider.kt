@@ -50,4 +50,10 @@ interface LocaleProvider {
      */
     fun getStringSync(key: String): String? = this.getString(key).get()
 
+    /**
+     * Returns all keys starting with the given [prefix].
+     * If the strings are not loaded, the result is undefined.
+     */
+    fun getKeys(prefix: String): List<String>
+
 }
