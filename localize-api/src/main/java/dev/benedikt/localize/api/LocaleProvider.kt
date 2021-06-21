@@ -52,7 +52,7 @@ interface LocaleProvider {
 
     /**
      * Returns all keys starting with the given [prefix].
-     * If the strings are not loaded, the result is undefined.
+     * The strings will be loaded, if they are currently unloaded.
      */
     fun getKeys(prefix: String): List<String>
 

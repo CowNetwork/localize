@@ -159,6 +159,11 @@ abstract class BaseLocaleProvider @JvmOverloads constructor(var unloadInterval: 
         this.unload()
     }
 
-    override fun getKeys(prefix: String) = this.strings.keys.filter { it.startsWith(prefix) }
+    override fun getKeys(prefix: String) : List<String> {
+        synchronized(this.strings) {
+            this.load()
+            return this.strings.keys.filter { it.startsWith(prefix) }
+        }
+    }
 
 }
