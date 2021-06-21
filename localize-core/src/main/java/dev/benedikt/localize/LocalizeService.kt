@@ -196,7 +196,7 @@ object LocalizeService {
         }
     }
 
-    private fun getKeys(prefix: String) : List<String> {
+    fun getKeys(prefix: String = "") : List<String> {
         val provider = this.getLocaleProvider(this.fallbackLocale!!)
         return provider.getKeys(prefix)
     }
